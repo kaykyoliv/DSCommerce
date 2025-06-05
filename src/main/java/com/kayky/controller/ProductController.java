@@ -1,9 +1,10 @@
 package com.kayky.controller;
 
 import com.kayky.dto.request.ProductPostRequest;
+import com.kayky.dto.request.ProductPutRequest;
 import com.kayky.dto.response.ProductGetResponse;
 import com.kayky.dto.response.ProductPostResponse;
-import com.kayky.mapper.ProductMapper;
+import com.kayky.dto.response.ProductPutResponse;
 import com.kayky.service.ProductService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,39 +22,45 @@ import java.util.List;
 public class ProductController {
 
     private final ProductService service;
-    private final ProductMapper mapper;
 
     @GetMapping
     public ResponseEntity<List<ProductGetResponse>> findAll() {
         log.debug("Request received to list all products");
-        var products = service.findAll();
-        var response = mapper.toProductGetResponseList(products);
 
-        return ResponseEntity.ok(response);
+        var allProducts = service.findAll();
+
+        return ResponseEntity.ok(allProducts);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ProductGetResponse> findById(@PathVariable Long id) {
-        log.debug("Request to find product by id");
-        var product = service.findById(id);
-        var response = mapper.toProductGetResponse(product);
+        log.debug("Request to find product by id {}", id);
 
-        return ResponseEntity.ok(response);
+        var product = service.findByIdOrThrowNotFound(id);
+
+        return ResponseEntity.ok(product);
     }
 
     @PostMapping
-    public ResponseEntity<ProductPostResponse> save(@RequestBody ProductPostRequest request){
+    public ResponseEntity<ProductPostResponse> save(@RequestBody ProductPostRequest request) {
         log.debug("request to create new product");
 
-        var productEntity = mapper.toProduct(request);
-        var savedProduct = service.save(productEntity);
-        var responseDto = mapper.toProductPostResponse(savedProduct);
+        var savedProduct = service.save(request);
 
         URI uri = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(savedProduct.getId()).toUri();
 
-        return ResponseEntity.created(uri).body(responseDto);
+        return ResponseEntity.created(uri).body(savedProduct);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ProductPutResponse> update(@PathVariable Long id, @RequestBody ProductPutRequest request) {
+        log.debug("request to update a product by id {}", id);
+
+        var updatedProduct = service.update(id, request);
+
+        return ResponseEntity.ok(updatedProduct);
     }
 }

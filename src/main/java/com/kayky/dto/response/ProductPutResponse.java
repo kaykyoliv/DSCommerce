@@ -3,14 +3,13 @@ package com.kayky.dto.response;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
 
-@Builder
-@Getter
 @Setter
-public class ProductPostResponse {
+@Getter
+@Builder
+public class ProductPutResponse {
 
     private Long id;
     private String name;
@@ -19,4 +18,5 @@ public class ProductPostResponse {
     private Double price;
 
     private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }
