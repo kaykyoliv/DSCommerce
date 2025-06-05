@@ -16,6 +16,9 @@ import java.util.List;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface ProductMapper {
 
+    @Mapping(target = "createdAt", ignore = true)
+    void updateProductFromRequest(ProductPutRequest request, @MappingTarget Product product);
+
     List<ProductGetResponse> toProductGetResponseList(List<Product> products);
 
     ProductGetResponse toProductGetResponse(Product product);
@@ -25,8 +28,6 @@ public interface ProductMapper {
     Product toProduct(ProductPutRequest request);
 
     ProductPostResponse toProductPostResponse(Product product);
-
-    void updateProductFromRequest(ProductPutRequest request, @MappingTarget Product product);
 
     ProductPutResponse toProductPutResponse(Product product);
 }

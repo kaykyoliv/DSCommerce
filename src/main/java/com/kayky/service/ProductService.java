@@ -1,6 +1,5 @@
 package com.kayky.service;
 
-import com.kayky.domain.Product;
 import com.kayky.dto.request.ProductPostRequest;
 import com.kayky.dto.request.ProductPutRequest;
 import com.kayky.dto.response.ProductGetResponse;
@@ -48,13 +47,20 @@ public class ProductService {
 
         mapper.updateProductFromRequest(productRequest, productToUpdate);
         repository.save(productToUpdate);
+        repository.flush();
 
         return mapper.toProductPutResponse(productToUpdate);
     }
 
-    public void assertIfProductExists(Long id) {
-        findByIdOrThrowNotFound(id);
+    @Transactional
+    public void delete(Long id){
+        assertIfProductExists(id);
+        repository.deleteById(id);
     }
 
-
+    public void assertIfProductExists(Long id) {
+        if(!repository.existsById(id)){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "product not found");
+        }
+    }
 }
