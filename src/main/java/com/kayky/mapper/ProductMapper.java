@@ -25,8 +25,6 @@ public interface ProductMapper {
 
     Product toProduct(ProductPostRequest request);
 
-    Product toProduct(ProductPutRequest request);
-
     ProductPostResponse toProductPostResponse(Product product);
 
     ProductPutResponse toProductPutResponse(Product product);
