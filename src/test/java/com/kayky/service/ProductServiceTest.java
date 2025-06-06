@@ -7,18 +7,22 @@ import com.kayky.repository.ProductRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mapstruct.factory.Mappers;
 import org.mockito.BDDMockito;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 
 @ExtendWith(MockitoExtension.class)
@@ -53,7 +57,7 @@ class ProductServiceTest {
 
         var actualResponse = service.findAll();
 
-        Assertions.assertThat(actualResponse).isEqualTo(expectedResponse);
+        assertThat(actualResponse).isEqualTo(expectedResponse);
     }
 
 
@@ -68,21 +72,26 @@ class ProductServiceTest {
 
         var product = service.findByIdOrThrowNotFound(expectedProduct.getId());
 
-        Assertions.assertThat(product)
+        assertThat(product)
                 .usingRecursiveComparison()
                 .isEqualTo(expectedResponse);
     }
 
     @Test
     @DisplayName("findById throws ResponseStatusException when product does not exists")
-    void findById_ShouldThrowsResponseStatusException_WhenProductIdDoesNotExists() {
+    void findById_ThrowsResponseStatusException_WhenProductIdDoesNotExists() {
         var expectedProduct = productList.getFirst();
 
         BDDMockito.when(repository.findById(expectedProduct.getId())).thenReturn(Optional.empty());
 
         Assertions.assertThatException()
                 .isThrownBy(() -> service.findByIdOrThrowNotFound(expectedProduct.getId()))
-                .isInstanceOf(ResponseStatusException.class);
+                .isInstanceOf(ResponseStatusException.class)
+                .satisfies(ex -> {
+                    var responseEx = (ResponseStatusException) ex;
+                    assertThat(responseEx.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+                    assertThat(responseEx.getReason()).isEqualTo("product not found");
+                });
     }
 
     @Test
@@ -98,7 +107,7 @@ class ProductServiceTest {
 
         var actualProduct = service.save(productPostRequest);
 
-        Assertions.assertThat(actualProduct)
+        assertThat(actualProduct)
                 .usingRecursiveComparison()
                 .isEqualTo(expectedResponse);
     }
@@ -117,9 +126,66 @@ class ProductServiceTest {
 
         var actualProduct = service.update(productId, productPutRequest);
 
-        Assertions.assertThat(actualProduct)
+        assertThat(actualProduct)
                 .usingRecursiveComparison()
                 .ignoringFields("createdAt", "updatedAt")
                 .isEqualTo(expectedResponse);
+    }
+
+    @Test
+    @DisplayName("update throws ResponseStatusException when id does not exists")
+    void update_ThrowsResponseStatusException_WhenIdDoesNotExists() {
+        var nonExistingId = 99L;
+        var productPutRequest = productUtils.productPutRequest();
+
+        BDDMockito.when(repository.findById(nonExistingId)).thenReturn(Optional.empty());
+
+        Assertions.assertThatException().isThrownBy(
+                () -> service.update(nonExistingId, productPutRequest))
+                .isInstanceOf(ResponseStatusException.class)
+                .satisfies(ex ->{
+                    var responseEx = (ResponseStatusException) ex;
+                    assertThat(responseEx.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+                    assertThat(responseEx.getReason()).isEqualTo("product not found");
+
+                });
+    }
+
+
+    @Test
+    @DisplayName("delete removes product by id")
+    void deleteById_ShouldRemoveProduct_WhenSuccessful() {
+        var existingId = 1L;
+        BDDMockito.when(repository.existsById(existingId)).thenReturn(true);
+        BDDMockito.doNothing().when(repository).deleteById(existingId);
+
+        service.delete(existingId);
+
+        // Verifica se existia antes de deletar
+        BDDMockito.then(repository).should().existsById(existingId);
+
+        // Verifica se deletou
+        BDDMockito.then(repository).should().deleteById(existingId);
+    }
+
+
+    @Test
+    @DisplayName("update throws ResponseStatusException when id does not exists")
+    void delete_ThrowsResponseStatusException_WhenIdDoesNotExists() {
+        var nonExistingId = 99L;
+
+        BDDMockito.when(repository.existsById(nonExistingId)).thenReturn(false);
+
+        Assertions.assertThatException().isThrownBy(
+                () -> service.delete(nonExistingId))
+                .isInstanceOfAny(ResponseStatusException.class)
+                .satisfies(ex -> {
+                    var responseEx = (ResponseStatusException) ex;
+                    assertThat(responseEx.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+                    assertThat(responseEx.getReason()).isEqualTo("product not found");
+                });
+
+        // Garante que o deleteById não foi chamado
+        BDDMockito.then(repository).should(Mockito.never()).deleteById(any());
     }
 }
