@@ -7,10 +7,11 @@ import com.kayky.dto.response.ProductPostResponse;
 import com.kayky.dto.response.ProductPutResponse;
 import com.kayky.mapper.ProductMapper;
 import com.kayky.repository.ProductRepository;
-import jakarta.transaction.Transactional;
+
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -22,11 +23,13 @@ public class ProductService {
     private final ProductMapper mapper;
     private final ProductRepository repository;
 
+    @Transactional(readOnly = true)
     public List<ProductGetResponse> findAll() {
         var allProducts = repository.findAll();
         return mapper.toProductGetResponseList(allProducts);
     }
 
+    @Transactional(readOnly = true)
     public ProductGetResponse findByIdOrThrowNotFound(Long id) {
         var product = repository.findById(id).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "product not found"));
@@ -53,13 +56,13 @@ public class ProductService {
     }
 
     @Transactional
-    public void delete(Long id){
+    public void delete(Long id) {
         assertIfProductExists(id);
         repository.deleteById(id);
     }
 
     public void assertIfProductExists(Long id) {
-        if(!repository.existsById(id)){
+        if (!repository.existsById(id)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "product not found");
         }
     }
