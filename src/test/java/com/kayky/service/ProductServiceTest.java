@@ -7,7 +7,6 @@ import com.kayky.repository.ProductRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mapstruct.factory.Mappers;
@@ -149,6 +148,8 @@ class ProductServiceTest {
                     assertThat(responseEx.getReason()).isEqualTo("product not found");
 
                 });
+
+        BDDMockito.then(repository).should(Mockito.never()).save(any());
     }
 
 
