@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -21,11 +22,37 @@ public class ProductUtils {
     );
 
     public List<Product> newProductList() {
-        return List.of(
-                buildProduct(1L, "Iphone 8 plus", "Iphone", 15, 3350.0),
-                buildProduct(2L, "Carregador", "Carregador original iphone", 15, 150.0),
-                buildProduct(3L, "Capinha Iphone", "Capinha Iphone 8 verde", 15, 50.0)
-        );
+        var iphone = Product.builder()
+                .id(1L)
+                .name("Iphone 8 plus")
+                .description("Iphone")
+                .quantity(15)
+                .price(3350.0)
+                .createdAt(fixedDateTime)
+                .updatedAt(fixedDateTime)
+                .build();
+
+        var carregador = Product.builder()
+                .id(2L)
+                .name("Carregador")
+                .description("Carregador original iphone")
+                .quantity(15)
+                .price(150.0)
+                .createdAt(fixedDateTime)
+                .updatedAt(fixedDateTime)
+                .build();
+
+        var capinha = Product.builder()
+                .id(3L)
+                .name("Capinha Iphone")
+                .description("Capinha Iphone 8 verde")
+                .quantity(15)
+                .price(50.0)
+                .createdAt(fixedDateTime)
+                .updatedAt(fixedDateTime)
+                .build();
+
+        return new ArrayList<>(List.of(iphone, carregador, capinha));
     }
 
     public Product productToSave() {
@@ -46,7 +73,11 @@ public class ProductUtils {
                 .map(p -> ProductGetResponse.builder()
                         .id(p.getId())
                         .name(p.getName())
+                        .description(p.getDescription())
+                        .quantity(p.getQuantity())
                         .price(p.getPrice())
+                        .createdAt(p.getCreatedAt())
+                        .updatedAt(p.getUpdatedAt())
                         .build())
                 .toList();
     }

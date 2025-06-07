@@ -1,0 +1,29 @@
+[
+  {
+    "id": 1,
+    "name": "Iphone 8 plus",
+    "description": "Iphone",
+    "quantity": 15,
+    "price": 3350.0,
+    "createdAt": "2024-08-06T10:36:59.441524",
+    "updatedAt": "2024-08-06T10:36:59.441524"
+  },
+  {
+    "id": 2,
+    "name": "Carregador",
+    "description": "Carregador original iphone",
+    "quantity": 15,
+    "price": 150.0,
+    "createdAt": "2024-08-06T10:36:59.441524",
+    "updatedAt": "2024-08-06T10:36:59.441524"
+  },
+  {
+    "id": 3,
+    "name": "Capinha Iphone",
+    "description": "Capinha Iphone 8 verde",
+    "quantity": 15,
+    "price": 50.0,
+    "createdAt": "2024-08-06T10:36:59.441524",
+    "updatedAt": "2024-08-06T10:36:59.441524"
+  }
+]
