@@ -7,22 +7,28 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Builder
-@ToString
+@ToString(onlyExplicitlyIncluded = true)
 @EntityListeners(AuditingEntityListener.class)
 public class Product {
 
+    @ToString.Include
+    @EqualsAndHashCode.Include
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @ToString.Include
     private String name;
+    @ToString.Include
     private String description;
     private Integer quantity;
     private Double price;
@@ -34,5 +40,11 @@ public class Product {
     @LastModifiedDate
     @Column(nullable = false)
     private LocalDateTime updatedAt;
+
+    @ManyToMany
+    @JoinTable(name = "product_category",
+            joinColumns = @JoinColumn(name = "product_id"),
+            inverseJoinColumns = @JoinColumn(name = "category_id"))
+    private Set<Category> categories = new HashSet<>();
 
 }
