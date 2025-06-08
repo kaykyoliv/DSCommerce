@@ -37,10 +37,10 @@ public class ProductService {
     }
 
     @Transactional
-    public ProductPostResponse save(ProductPostRequest productRequest) {
-        var productEntity = mapper.toProduct(productRequest);
-        productEntity = repository.save(productEntity);
-        return mapper.toProductPostResponse(productEntity);
+    public ProductPostResponse save(ProductPostRequest postRequest) {
+        var productToSave = mapper.toProduct(postRequest);
+        var productSaved = repository.save(productToSave);
+        return mapper.toProductPostResponse(productSaved);
     }
 
     @Transactional
