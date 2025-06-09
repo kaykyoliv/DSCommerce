@@ -51,12 +51,11 @@ public class CategoryController {
         return ResponseEntity.created(uri).body(category);
     }
 
-    @PostMapping("/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<CategoryPutResponse> update(@PathVariable Long id, @RequestBody CategoryPutRequest putRequest) {
         log.debug("Request to update a category by id {}", id);
 
         var category = service.update(id, putRequest);
-        ;
 
         return ResponseEntity.ok(category);
     }

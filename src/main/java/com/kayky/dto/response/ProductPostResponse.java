@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Builder
 @Getter
@@ -18,4 +19,6 @@ public class ProductPostResponse {
     private Double price;
 
     private LocalDateTime createdAt;
+
+    private Set<Long> categoryIds;
 }

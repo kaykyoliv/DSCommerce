@@ -8,6 +8,5 @@ import lombok.Setter;
 @Setter
 @Builder
 public class CategoryPostRequest {
-    private Long id;
     private String name;
 }

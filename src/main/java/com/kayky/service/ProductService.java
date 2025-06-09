@@ -6,8 +6,8 @@ import com.kayky.dto.response.ProductGetResponse;
 import com.kayky.dto.response.ProductPostResponse;
 import com.kayky.dto.response.ProductPutResponse;
 import com.kayky.mapper.ProductMapper;
+import com.kayky.mapper.ProductMapperHelper;
 import com.kayky.repository.ProductRepository;
-
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -22,6 +22,8 @@ public class ProductService {
 
     private final ProductMapper mapper;
     private final ProductRepository repository;
+    private final ProductMapperHelper productMapperHelper;
+
 
     @Transactional(readOnly = true)
     public List<ProductGetResponse> findAll() {
@@ -38,7 +40,7 @@ public class ProductService {
 
     @Transactional
     public ProductPostResponse save(ProductPostRequest postRequest) {
-        var productToSave = mapper.toProduct(postRequest);
+        var productToSave = mapper.toProduct(postRequest, productMapperHelper);
         var productSaved = repository.save(productToSave);
         return mapper.toProductPostResponse(productSaved);
     }
