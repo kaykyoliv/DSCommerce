@@ -50,11 +50,11 @@ public class ProductService {
         var productToUpdate = repository.findById(id).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "product not found"));
 
-        mapper.updateProductFromRequest(productRequest, productToUpdate);
-        repository.save(productToUpdate);
+        mapper.updateProductFromRequest(productRequest, productToUpdate, productMapperHelper);
+        var updatedProduct = repository.save(productToUpdate);
         repository.flush();
 
-        return mapper.toProductPutResponse(productToUpdate);
+        return mapper.toProductPutResponse(updatedProduct);
     }
 
     @Transactional

@@ -23,7 +23,8 @@ public interface ProductMapper {
     Product toProduct(ProductPostRequest request, @Context ProductMapperHelper helper);
 
     @Mapping(target = "createdAt", ignore = true)
-    void updateProductFromRequest(ProductPutRequest request, @MappingTarget Product product);
+    @Mapping(target = "categories", source = "categoryIds")
+    void updateProductFromRequest(ProductPutRequest request, @MappingTarget Product product, @Context ProductMapperHelper helper);
 
     List<ProductGetResponse> toProductGetResponseList(List<Product> products);
 
@@ -32,6 +33,7 @@ public interface ProductMapper {
     @Mapping(target = "categoryIds", expression = "java(mapCategoriesToIds(product.getCategories()))")
     ProductPostResponse toProductPostResponse(Product product);
 
+    @Mapping(target = "categoryIds", expression = "java(mapCategoriesToIds(product.getCategories()))")
     ProductPutResponse toProductPutResponse(Product product);
 
     default Set<Category> mapCategoryIds(Set<Long> ids, @Context ProductMapperHelper helper) {
