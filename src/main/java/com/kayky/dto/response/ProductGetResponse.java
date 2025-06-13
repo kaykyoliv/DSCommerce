@@ -1,8 +1,10 @@
 package com.kayky.dto.response;
 
+import com.kayky.domain.Category;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Builder
 @Getter
@@ -18,4 +20,6 @@ public class ProductGetResponse {
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+    private Set<CategoryGetResponse> categories;
 }

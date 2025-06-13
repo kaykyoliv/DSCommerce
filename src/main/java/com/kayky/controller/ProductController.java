@@ -5,15 +5,18 @@ import com.kayky.dto.request.ProductPutRequest;
 import com.kayky.dto.response.ProductGetResponse;
 import com.kayky.dto.response.ProductPostResponse;
 import com.kayky.dto.response.ProductPutResponse;
+import com.kayky.dto.response.ProductSummaryResponse;
 import com.kayky.service.ProductService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.util.List;
 
 @RestController
 @RequestMapping(value = "v1/products")
@@ -24,10 +27,10 @@ public class ProductController {
     private final ProductService service;
 
     @GetMapping
-    public ResponseEntity<List<ProductGetResponse>> findAll() {
+    public ResponseEntity<Page<ProductSummaryResponse>> findAllPaged(@PageableDefault Pageable pageable) {
         log.debug("Request received to list all products");
 
-        var allProducts = service.findAll();
+        var allProducts = service.findAll(pageable);
 
         return ResponseEntity.ok(allProducts);
     }

@@ -1,5 +1,6 @@
 package com.kayky.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -25,6 +26,7 @@ public class Category {
     private String name;
 
     @ManyToMany(mappedBy = "categories")
+    @JsonBackReference
     private Set<Product> products = new HashSet<>();
 
 

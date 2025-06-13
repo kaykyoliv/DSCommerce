@@ -1,5 +1,6 @@
 package com.kayky.domain;
 
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -43,6 +44,7 @@ public class Product {
     @JoinTable(name = "product_category",
             joinColumns = @JoinColumn(name = "product_id"),
             inverseJoinColumns = @JoinColumn(name = "category_id"))
+    @JsonIdentityReference
     private Set<Category> categories = new HashSet<>();
 
 }
